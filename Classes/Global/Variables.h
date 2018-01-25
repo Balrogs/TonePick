@@ -25,6 +25,7 @@ public:
     static long getCurrentTime();
     static void setResolution(Resolution resolution);
 
+    static const int FACTOR;
 private:
     static Resolution _resolution;
 

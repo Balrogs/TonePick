@@ -130,6 +130,11 @@ set(GAME_SRC
         Classes/Scenes/Menu/SplashScene.cpp
         Classes/Global/Localization/LocalizedStrings.cpp
         Classes/Global/Variables.cpp
+        Classes/Scenes/Menu/MainScene.cpp
+        Classes/Scenes/Menu/MainMenu.cpp
+        Classes/Scenes/Menu/Settings.cpp
+        Classes/Scenes/Game/GameScene.cpp
+        Classes/Global/Utils.cpp
         ${PLATFORM_SPECIFIC_SRC}
         )
 
@@ -177,6 +182,12 @@ set(GAME_HEADERS
         Classes/Scenes/Menu/SplashScene.h
         Classes/Global/Localization/LocalizedStrings.h
         Classes/Global/Variables.h
+        Classes/Scenes/Menu/MainScene.h
+        Classes/Scenes/Menu/MainMenu.h
+        Classes/Scenes/Menu/Settings.h
+        Classes/Scenes/Game/GameScene.h
+        Classes/Global/Utils.h
+        Classes/Objects/BasicBlock.h
         ${PLATFORM_SPECIFIC_HEADERS}
         )
 

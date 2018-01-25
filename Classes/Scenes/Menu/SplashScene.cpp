@@ -4,6 +4,7 @@
 
 #include <Global/Localization/LocalizedStrings.h>
 #include "SplashScene.h"
+#include "MainScene.h"
 
 
 USING_NS_CC;
@@ -101,7 +102,7 @@ bool SplashScene::init() {
 }
 
 void SplashScene::GoToMainMenuScene(float dt) {
-//    auto scene = MainScene::create();
-//
-//    Director::getInstance()->replaceScene(TransitionFade::create(0.5f, scene));
+    auto scene = MainScene::create();
+
+    Director::getInstance()->replaceScene(TransitionFade::create(0.5f, scene));
 }

@@ -8,6 +8,7 @@
 Resolution Variables::_resolution = Resolution::HD;
 
 const std::string Variables::FONT_NAME = "Marker Felt.ttf";
+const int Variables::FACTOR = 9;
 
 void Variables::setResolution(Resolution resolution) {
     Variables::_resolution = resolution;
