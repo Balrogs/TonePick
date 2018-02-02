@@ -49,11 +49,6 @@ bool MainMenu::init() {
 //                                     settingsButton->getBoundingBox().size.height / 2 + 15.f));
 //    this->addChild(settingsButton);
 
-    cocos2d::Director::getInstance()->getScheduler()->schedule(
-            schedule_selector(MainMenu::_enterFrameHandler),
-            this, 0.f, false
-    );
-
     _keyboardListener = cocos2d::EventListenerKeyboard::create();
     _keyboardListener->onKeyReleased = [&](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
         switch (keyCode) {
@@ -94,13 +89,19 @@ bool MainMenu::init() {
     touchListener->onTouchBegan = CC_CALLBACK_2(MainMenu::_touchHandlerBegin, this);
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
 
+    _color = Color4B(79, 127, 204, 255);
     _fillArea();
+
+    cocos2d::Director::getInstance()->getScheduler()->schedule(
+            schedule_selector(MainMenu::_enterFrameHandler),
+            this, 1.f, false
+    );
 
     return true;
 }
 
 void MainMenu::_enterFrameHandler(float passedTime) {
-
+    _updateColor();
 }
 
 void MainMenu::onEnter() {
@@ -129,16 +130,36 @@ void MainMenu::showPopUp(Node* popUp) {
 void MainMenu::_fillArea() {
     auto size = Utils::_getBlockSize(_visibleSize);
     auto widthFactor = _visibleSize.width / Variables::FACTOR;
-    auto color = Color4F(Color4B(79, 127, 204, 255));
+    auto color = Color4F(_color);
+    for(unsigned int i = 0; i < Variables::FACTOR; i++){
+        vector<BasicBlock*> row;
 
-    for(int i = 0; i < Variables::FACTOR; i++){
-        for(int j = 0; j < widthFactor; j++){
+        for(unsigned int j = 0; j < widthFactor; j++){
             auto pos = Vec2(j * size.width, i * size.width);
 
             auto block = BasicBlock::create(size, color);
             block->setPosition(pos);
             this->addChild(block);
+
+            this->runAction(Sequence::create(
+                    DelayTime::create((i + j) / 20.f),
+                    CallFunc::create([block]{
+                        block->appear();
+                    }),
+                    NULL
+            ));
+
+            row.push_back(block);
+        }
+        _blocks.push_back(row);
+    }
+}
+
+void MainMenu::_updateColor() {
+    _color = Color4B(_color.r, (GLubyte) (_color.g + 2), _color.b, _color.a);
+    for(auto i = 0; i < _blocks.size(); i++){
+        for(auto j = 0; j < _blocks[i].size(); j++) {
+            _blocks[i][j]->paint(Color4F(_color));
         }
     }
-
 }

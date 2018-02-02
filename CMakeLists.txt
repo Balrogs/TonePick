@@ -135,6 +135,7 @@ set(GAME_SRC
         Classes/Scenes/Menu/Settings.cpp
         Classes/Scenes/Game/GameScene.cpp
         Classes/Global/Utils.cpp
+        Classes/Objects/BasicBlock.cpp
         ${PLATFORM_SPECIFIC_SRC}
         )
 

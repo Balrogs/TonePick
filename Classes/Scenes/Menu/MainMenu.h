@@ -6,7 +6,7 @@
 #define TONEPICK_MAINMENU_H
 
 #include "cocos2d.h"
-
+#include "Objects/BasicBlock.h"
 
 class MainMenu : public cocos2d::LayerColor {
 public:
@@ -21,6 +21,7 @@ public:
     void showPopUp(cocos2d::Node* popUp);
 
 private:
+    std::vector<std::vector<BasicBlock*>> _blocks;
 
     bool _touchHandlerBegin(const cocos2d::Touch *touch, cocos2d::Event *event);
 
@@ -29,6 +30,10 @@ private:
     cocos2d::Size _visibleSize;
 
     void _fillArea();
+
+    void _updateColor();
+
+    Color4B _color;
 };
 
 
