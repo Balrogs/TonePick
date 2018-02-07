@@ -2,7 +2,7 @@
 // Created by igor on 24.01.18.
 //
 
-#include "BasicBlock.h"
+#include "MenuBlock.h"
 
 enum {
     kTagStencilNode = 100,
@@ -15,8 +15,17 @@ enum {
 };
 
 BasicBlock *BasicBlock::create(Size size, Color4F color) {
+    return create(size, color, true);
+}
+
+bool BasicBlock::init(Size size, Color4F color) {
+    return init(size, color, true);
+}
+
+
+BasicBlock *BasicBlock::create(Size size, Color4F color, bool isBreakable) {
     BasicBlock *ret = new(std::nothrow) BasicBlock();
-    if (ret && ret->init(size, color)) {
+    if (ret && ret->init(size, color, isBreakable)) {
         ret->autorelease();
     } else {
         CC_SAFE_DELETE(ret);
@@ -24,10 +33,11 @@ BasicBlock *BasicBlock::create(Size size, Color4F color) {
     return ret;
 }
 
-bool BasicBlock::init(Size size, Color4F color) {
+bool BasicBlock::init(Size size, Color4F color, bool isBreakable) {
     if(!Node::init()){
         return false;
     }
+    _isBreakable = isBreakable;
     _size = size;
     _color = color;
 
@@ -47,6 +57,7 @@ bool BasicBlock::init(Size size, Color4F color) {
     return true;
 }
 
+
 Node *BasicBlock::_stencil() {
     auto stencil = Node::create();
     static Color4F green(0, 1, 0, 1);
@@ -62,7 +73,7 @@ Node *BasicBlock::_stencil() {
 
     bottom->drawPolygon(triangle, 3, green, 0, green);
     stencil->addChild(bottom);
-    bottom->setVisible(false);
+    bottom->setScale(0);
 
     auto left = DrawNode::create();
     left->setTag(kTagStencilLeft);
@@ -72,7 +83,7 @@ Node *BasicBlock::_stencil() {
 
     left->drawPolygon(triangle, 3, green, 0, green);
     stencil->addChild(left);
-    left->setVisible(false);
+    left->setScale(0);
 
     auto top = DrawNode::create();
     top->setTag(kTagStencilTop);
@@ -82,7 +93,7 @@ Node *BasicBlock::_stencil() {
 
     top->drawPolygon(triangle, 3, green, 0, green);
     stencil->addChild(top);
-    top->setVisible(false);
+    top->setScale(0);
 
     auto right = DrawNode::create();
     right->setTag(kTagStencilRight);
@@ -92,7 +103,7 @@ Node *BasicBlock::_stencil() {
 
     right->drawPolygon(triangle, 3, green, 0, green);
     stencil->addChild(right);
-    right->setVisible(false);
+    right->setScale(0);
 
     return stencil;
 }
@@ -117,25 +128,60 @@ void BasicBlock::appear() {
     _show(true);
 }
 
+void BasicBlock::hide() {
+    if(_isBreakable)
+        _show(false);
+}
+
+
 void BasicBlock::_show(bool isVisible) {
+    float scale = 1.f;
+
+    if(!isVisible){
+        scale = 0.f;
+    }
+    float timeDelay = .4f;
+
     auto stencil = dynamic_cast<ClippingNode *> (this->getChildByTag(kTagClipperNode))->getStencil();
     auto delay = DelayTime::create(0.05f);
+
     this->runAction(Sequence::create(
-            CallFunc::create([&, stencil, isVisible]{
-                stencil->getChildByTag(kTagStencilLeft)->setVisible(isVisible);
+            CallFunc::create([&, stencil, scale, timeDelay]{
+                stencil->getChildByTag(kTagStencilLeft)->runAction(Spawn::create(
+                        ScaleTo::create(timeDelay, scale),
+                        MoveTo::create(timeDelay, Vec2(_size.width * (1 - scale), _size.height * (1 - scale))),
+                        NULL)
+                );
             }),
             delay,
-            CallFunc::create([&, stencil, isVisible]{
-                stencil->getChildByTag(kTagStencilBottom)->setVisible(isVisible);
+            CallFunc::create([&, stencil, scale, timeDelay]{
+                stencil->getChildByTag(kTagStencilBottom)->runAction(Spawn::create(
+                        ScaleTo::create(timeDelay, scale),
+                        MoveTo::create(timeDelay, Vec2(_size.width * (1 - scale), _size.height * (1 - scale))),
+                        NULL)
+                );
             }),
             delay,
-            CallFunc::create([&, stencil, isVisible]{
-                stencil->getChildByTag(kTagStencilTop)->setVisible(isVisible);
+            CallFunc::create([&, stencil, scale, timeDelay]{
+                stencil->getChildByTag(kTagStencilTop)->runAction(Spawn::create(
+                        ScaleTo::create(timeDelay, scale),
+                        MoveTo::create(timeDelay, Vec2(_size.width * (1 - scale), _size.height * (1 - scale))),
+                        NULL)
+                );
             }),
             delay,
-            CallFunc::create([&, stencil, isVisible]{
-                stencil->getChildByTag(kTagStencilRight)->setVisible(isVisible);
+            CallFunc::create([&, stencil, scale, timeDelay]{
+                stencil->getChildByTag(kTagStencilRight)->runAction(Spawn::create(
+                        ScaleTo::create(timeDelay, scale),
+                        MoveTo::create(timeDelay, Vec2(_size.width * (1 - scale), _size.height * (1 - scale))),
+                        NULL)
+                );
             }),
             NULL
     ));
+}
+
+Rect BasicBlock::getBoundingBox() const {
+    Rect rect(this->getPosition().x, this->getPosition().y, _size.width, _size.height);
+    return rect;
 }

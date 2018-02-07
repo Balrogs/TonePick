@@ -13,7 +13,6 @@ LOCAL_MODULE_FILENAME := libMyGame
 
 LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/AppDelegate.cpp \
-                   ../../Classes/AppDelegate.cpp \
                    ../../Classes/Scenes/Menu/SplashScene.cpp \
                    ../../Classes/Global/Localization/LocalizedStrings.cpp \
                    ../../Classes/Global/Variables.cpp \
@@ -21,7 +20,8 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/Scenes/Menu/MainMenu.cpp \
                    ../../Classes/Scenes/Menu/Settings.cpp \
                    ../../Classes/Scenes/Game/GameScene.cpp \
-                   ../../Classes/Global/Utils.cpp
+                   ../../Classes/Global/Utils.cpp \
+                   ../../Classes/Objects/MenuBlock.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 

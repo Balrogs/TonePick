@@ -6,7 +6,7 @@
 #include <Global/Localization/LocalizedStrings.h>
 #include <Global/Variables.h>
 #include <Global/Utils.h>
-#include <Objects/BasicBlock.h>
+#include <Objects/MenuBlock.h>
 #include "MainMenu.h"
 #include "MainScene.h"
 #include "Settings.h"
@@ -85,8 +85,11 @@ bool MainMenu::init() {
 
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_keyboardListener, this);
 
+    _touch = -1;
     const auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
     touchListener->onTouchBegan = CC_CALLBACK_2(MainMenu::_touchHandlerBegin, this);
+    touchListener->onTouchMoved = CC_CALLBACK_2(MainMenu::_touchHandlerMoved, this);
+    touchListener->onTouchEnded = CC_CALLBACK_2(MainMenu::_touchHandlerEnd, this);
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
 
     _color = Color4B(79, 127, 204, 255);
@@ -115,8 +118,77 @@ void MainMenu::onPushScene(int id) {
 }
 
 bool MainMenu::_touchHandlerBegin(const cocos2d::Touch *touch, cocos2d::Event *event) {
+    if (_touch < 0) {
+        _touch = touch->getID();
+    } else {
+        return false;
+    }
+
+    for(auto i = 0; i < _blocks.size(); i++){
+        for(auto j = 0; j < _blocks[i].size(); j++) {
+            auto  box = _blocks[i][j]->getBoundingBox();
+            if(box.containsPoint(touch->getLocation())){
+                _focused = _blocks[i][j];
+                _focused->runAction(Spawn::create(
+                        ScaleTo::create(0.2f, 1.2f),
+                        MoveTo::create(0.2f, Vec2(_focused->getPosition().x - _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y - _focused->getBoundingBox().size.height * .2f / 2)),
+                        NULL));
+                return true;
+            }
+        }
+    }
+
     return true;
 }
+
+bool MainMenu::_touchHandlerMoved(const cocos2d::Touch *touch, cocos2d::Event *event) {
+    for(auto i = 0; i < _blocks.size(); i++){
+        for(auto j = 0; j < _blocks[i].size(); j++) {
+            auto  box = _blocks[i][j]->getBoundingBox();
+            if(box.containsPoint(touch->getLocation())){
+                if(_focused != nullptr ){
+                    if(_focused != _blocks[i][j])
+                        _focused->runAction(Spawn::create(
+                                ScaleTo::create(0.2f, 1.f),
+                                MoveTo::create(0.2f, Vec2(_focused->getPosition().x + _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y + _focused->getBoundingBox().size.height * .2f / 2)),
+                                NULL));
+                    else
+                        return true;
+                }
+                _focused = _blocks[i][j];
+                _focused->runAction(Spawn::create(
+                        ScaleTo::create(0.2f, 1.2f),
+                        MoveTo::create(0.2f, Vec2(_focused->getPosition().x - _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y - _focused->getBoundingBox().size.height * .2f / 2)),
+                        NULL));
+                return true;
+            }
+        }
+    }
+}
+
+
+bool MainMenu::_touchHandlerEnd(const cocos2d::Touch *touch, cocos2d::Event *event) {
+    if (_touch == touch->getID()) {
+        _touch = -1;
+    } else {
+        return false;
+    }
+
+    if(_focused != nullptr){
+        if(_focused->getBoundingBox().containsPoint(touch->getLocation()))
+            _focused->hide();
+        else
+            _focused->runAction(Spawn::create(
+                    ScaleTo::create(0.2f, 1.f),
+                    MoveTo::create(0.2f, Vec2(_focused->getPosition().x + _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y + _focused->getBoundingBox().size.height * .2f / 2)),
+                    NULL));
+    }
+
+    _focused = nullptr;
+
+    return true;
+}
+
 
 void MainMenu::showPopUp(Node* popUp) {
     if (this->getChildByName("PopUp") == nullptr) {
@@ -129,12 +201,13 @@ void MainMenu::showPopUp(Node* popUp) {
 
 void MainMenu::_fillArea() {
     auto size = Utils::_getBlockSize(_visibleSize);
-    auto widthFactor = _visibleSize.width / Variables::FACTOR;
+    auto widthFactor = 12;
+//    auto widthFactor = _visibleSize.width / Variables::FACTOR;
     auto color = Color4F(_color);
     for(unsigned int i = 0; i < Variables::FACTOR; i++){
         vector<BasicBlock*> row;
 
-        for(unsigned int j = 0; j < widthFactor; j++){
+        for(unsigned int j = 4; j < widthFactor; j++){
             auto pos = Vec2(j * size.width, i * size.width);
 
             auto block = BasicBlock::create(size, color);

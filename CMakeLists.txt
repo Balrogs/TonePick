@@ -135,7 +135,7 @@ set(GAME_SRC
         Classes/Scenes/Menu/Settings.cpp
         Classes/Scenes/Game/GameScene.cpp
         Classes/Global/Utils.cpp
-        Classes/Objects/BasicBlock.cpp
+        Classes/Objects/MenuBlock.cpp
         ${PLATFORM_SPECIFIC_SRC}
         )
 
@@ -188,7 +188,7 @@ set(GAME_HEADERS
         Classes/Scenes/Menu/Settings.h
         Classes/Scenes/Game/GameScene.h
         Classes/Global/Utils.h
-        Classes/Objects/BasicBlock.h
+        Classes/Objects/MenuBlock.h
         ${PLATFORM_SPECIFIC_HEADERS}
         )
 

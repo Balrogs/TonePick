@@ -12,12 +12,18 @@ USING_NS_CC;
 class BasicBlock: public Node {
 public:
     static BasicBlock* create(Size size, Color4F color);
+    static BasicBlock* create(Size size, Color4F color, bool isBreakable);
     bool init(Size size, Color4F color);
+    bool init(Size size, Color4F color, bool isBreakable);
 
     void paint(Color4F color);
     void appear();
+    void hide();
+
+    Rect getBoundingBox() const override;
 
 protected:
+    bool _isBreakable;
     Size _size;
     Color4F _color;
     virtual Node* _stencil();
