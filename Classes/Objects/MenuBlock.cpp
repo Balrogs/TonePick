@@ -147,35 +147,19 @@ void BasicBlock::_show(bool isVisible) {
 
     this->runAction(Sequence::create(
             CallFunc::create([&, stencil, scale, timeDelay]{
-                stencil->getChildByTag(kTagStencilLeft)->runAction(Spawn::create(
-                        ScaleTo::create(timeDelay, scale),
-                        MoveTo::create(timeDelay, Vec2(_size.width * (1 - scale), _size.height * (1 - scale))),
-                        NULL)
-                );
+                stencil->getChildByTag(kTagStencilLeft)->runAction(ScaleTo::create(timeDelay, scale));
             }),
             delay,
             CallFunc::create([&, stencil, scale, timeDelay]{
-                stencil->getChildByTag(kTagStencilBottom)->runAction(Spawn::create(
-                        ScaleTo::create(timeDelay, scale),
-                        MoveTo::create(timeDelay, Vec2(_size.width * (1 - scale), _size.height * (1 - scale))),
-                        NULL)
-                );
+                stencil->getChildByTag(kTagStencilBottom)->runAction(ScaleTo::create(timeDelay, scale) );
             }),
             delay,
             CallFunc::create([&, stencil, scale, timeDelay]{
-                stencil->getChildByTag(kTagStencilTop)->runAction(Spawn::create(
-                        ScaleTo::create(timeDelay, scale),
-                        MoveTo::create(timeDelay, Vec2(_size.width * (1 - scale), _size.height * (1 - scale))),
-                        NULL)
-                );
+                stencil->getChildByTag(kTagStencilTop)->runAction(ScaleTo::create(timeDelay, scale));
             }),
             delay,
             CallFunc::create([&, stencil, scale, timeDelay]{
-                stencil->getChildByTag(kTagStencilRight)->runAction(Spawn::create(
-                        ScaleTo::create(timeDelay, scale),
-                        MoveTo::create(timeDelay, Vec2(_size.width * (1 - scale), _size.height * (1 - scale))),
-                        NULL)
-                );
+                stencil->getChildByTag(kTagStencilRight)->runAction(ScaleTo::create(timeDelay, scale));
             }),
             NULL
     ));

@@ -6,6 +6,7 @@
 #define TONEPICK_MAINSCENE_H
 
 #include "cocos2d.h"
+#include "ParentLayer.h"
 
 class MainScene : public cocos2d::Scene{
 public:
@@ -15,23 +16,23 @@ public:
 
     bool init();
 
-    void replaceMain(cocos2d::Layer* layer);
+    void replaceMain(ParentLayer* layer);
 
-    void pushMain(cocos2d::Layer* layer);
+    void pushMain(ParentLayer* layer);
 
     void popMain();
 
     void popAndReplace();
 
-    cocos2d::Layer *getMain();
+    ParentLayer *getMain();
 
 private:
 
     static MainScene *_instance;
 
-    cocos2d::Layer *_main;
+    ParentLayer *_main;
 
-    std::stack<cocos2d::Layer *> _mainStack;
+    std::stack<ParentLayer *> _mainStack;
 };
 
 

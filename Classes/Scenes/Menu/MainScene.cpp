@@ -29,20 +29,24 @@ bool MainScene::init() {
     if (!Scene::initWithPhysics()) {
         return false;
     }
+    auto backgroundLayer = LayerColor::create(Color4B(46, 51, 58, 255));
+
+    this->addChild(backgroundLayer);
+
     _main = MainMenu::create();
 
     pushMain(_main);
     return true;
 }
 
-void MainScene::replaceMain(Layer *layer) {
+void MainScene::replaceMain(ParentLayer *layer) {
     while(_mainStack.size()){
         popMain();
     }
     pushMain(layer);
 }
 
-void MainScene::pushMain(Layer *layer) {
+void MainScene::pushMain(ParentLayer *layer) {
     _main = layer;
     _mainStack.push(_main);
     this->addChild(_main, 4);
@@ -55,7 +59,7 @@ void MainScene::popMain() {
     }
 }
 
-cocos2d::Layer *MainScene::getMain() {
+ParentLayer *MainScene::getMain() {
     return _main;
 }
 

@@ -6,6 +6,7 @@
 #include <Global/Variables.h>
 #include "Settings.h"
 #include "MainScene.h"
+#include "MainMenu.h"
 
 USING_NS_CC;
 
@@ -120,7 +121,13 @@ void Settings::onEnter() {
 }
 
 void Settings::onQuit() {
-    MainScene::getInstance()->popAndReplace();
+    this->runAction(Sequence::create(
+            DelayTime::create(1.f),
+            CallFunc::create([&]() {
+                MainScene::getInstance()->replaceMain(MainMenu::create());
+            }),
+            NULL)
+    );
 }
 
 void Settings::_reloadButtons() {
@@ -240,5 +247,9 @@ void Settings::_showScrollView() {
 //
 //    }
 //    this->addChild(_scrollView, 4);
+}
+
+void Settings::_enterFrameHandler(float passedTime) {
+
 }
 

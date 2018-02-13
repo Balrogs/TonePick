@@ -190,7 +190,7 @@ set(GAME_HEADERS
         Classes/Global/Utils.h
         Classes/Objects/MenuBlock.h
         ${PLATFORM_SPECIFIC_HEADERS}
-        )
+        Classes/Scenes/Menu/ParentLayer.cpp Classes/Scenes/Menu/ParentLayer.h)
 
 
 # Configure libcocos2d

@@ -13,6 +13,11 @@
 
 USING_NS_CC;
 
+enum {
+    kTagStartButton = 100,
+    kTagSettingsButton = 101,
+};
+
 MainMenu *MainMenu::create() {
     MainMenu *ret = new(std::nothrow) MainMenu();
     if (ret && ret->init()) {
@@ -25,29 +30,11 @@ MainMenu *MainMenu::create() {
 }
 
 bool MainMenu::init() {
-    if (!LayerColor::initWithColor(Color4B(46, 51, 58, 255))) {
+    if (!Layer::init()) {
         return false;
     }
 
     _visibleSize = Director::getInstance()->getVisibleSize();
-//
-//    auto settingsButton = cocos2d::ui::Button::create();
-//    settingsButton->loadTextures(Variables::SETTINGS_BUTTON, Variables::SETTINGS_PRESSED_BUTTON,
-//                                 Variables::SETTINGS_BUTTON, cocos2d::ui::Widget::TextureResType::PLIST);
-//
-//    settingsButton->addTouchEventListener([&](cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-//        switch (type) {
-//            case cocos2d::ui::Widget::TouchEventType::ENDED: {
-//                MainScene::getInstance()->replaceMain(Settings::create());
-//            }
-//                break;
-//            default:
-//                break;
-//        }
-//    });
-//    settingsButton->setPosition(Vec2(_visibleSize.width - settingsButton->getBoundingBox().size.width / 2 - 15.f,
-//                                     settingsButton->getBoundingBox().size.height / 2 + 15.f));
-//    this->addChild(settingsButton);
 
     _keyboardListener = cocos2d::EventListenerKeyboard::create();
     _keyboardListener->onKeyReleased = [&](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
@@ -55,21 +42,6 @@ bool MainMenu::init() {
             case EventKeyboard::KeyCode::KEY_BREAK:
             case EventKeyboard::KeyCode::KEY_ESCAPE:
             case EventKeyboard::KeyCode::KEY_BACKSPACE: {
-//                auto popUp = this->getChildByName("PopUp");
-//                if (popUp == nullptr) {
-//                    auto label = cocos2d::Label::createWithTTF(
-//                            LocalizedStrings::getInstance()->getString("EXIT THE GAME?"),
-//                            Variables::FONT_NAME,
-//                            Variables::FONT_SIZE());
-//                    label->setColor(cocos2d::Color3B::BLACK);
-//                    popUp = MainMenuPopUp::create(LocalizedStrings::getInstance()->getString("ARE YOU SURE?"),
-//                                                  label,
-//                                                  true);
-//                    showPopUp(popUp);
-//                } else {
-//                    popUp->removeFromParent();
-//                }
-
                 this->removeFromParent();
                 Director::getInstance()->end();
                 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
@@ -109,7 +81,6 @@ void MainMenu::_enterFrameHandler(float passedTime) {
 
 void MainMenu::onEnter() {
     Layer::onEnter();
-
 }
 
 void MainMenu::onPushScene(int id) {
@@ -202,9 +173,11 @@ void MainMenu::showPopUp(Node* popUp) {
 void MainMenu::_fillArea() {
     auto size = Utils::_getBlockSize(_visibleSize);
     auto widthFactor = 12;
-//    auto widthFactor = _visibleSize.width / Variables::FACTOR;
     auto color = Color4F(_color);
-    for(unsigned int i = 0; i < Variables::FACTOR; i++){
+
+    auto delay = 0.f;
+
+    for(unsigned int i = 1; i < Variables::FACTOR - 1; i++){
         vector<BasicBlock*> row;
 
         for(unsigned int j = 4; j < widthFactor; j++){
@@ -212,10 +185,10 @@ void MainMenu::_fillArea() {
 
             auto block = BasicBlock::create(size, color);
             block->setPosition(pos);
-            this->addChild(block);
-
+            this->addChild(block, 2);
+            delay = (i + j) / 20.f;
             this->runAction(Sequence::create(
-                    DelayTime::create((i + j) / 20.f),
+                    DelayTime::create(delay),
                     CallFunc::create([block]{
                         block->appear();
                     }),
@@ -226,6 +199,85 @@ void MainMenu::_fillArea() {
         }
         _blocks.push_back(row);
     }
+
+    delay += .5f;
+
+    auto startButton = cocos2d::ui::Button::create();
+    startButton->setTitleText("START");
+    startButton->setTitleFontName(Variables::FONT_NAME);
+    startButton->setTitleFontSize(size.height * .8f);
+    startButton->addTouchEventListener([&](cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
+        switch (type) {
+            case cocos2d::ui::Widget::TouchEventType::ENDED: {
+                this->runAction(Sequence::create(
+                        CallFunc::create([&](){
+                            onQuit();
+                            this->getChildByTag(kTagStartButton)->runAction(Sequence::create(
+                                    DelayTime::create(.5f),
+                                    ScaleTo::create(.5f, 0.f),
+                                    RemoveSelf::create(),
+                                    NULL
+                            ));
+                            this->getChildByTag(kTagSettingsButton)->runAction(Sequence::create(
+                                    ScaleTo::create(.5f, 0.f),
+                                    RemoveSelf::create(),
+                                    NULL
+                            ));
+                        }),
+                        DelayTime::create(1.1f),
+                        CallFunc::create([&]() {
+                            onPushScene(1);
+                        }),
+                        NULL)
+                );
+                break;
+            }
+            default:
+                break;
+        }
+    });
+
+    startButton->setPosition(Vec2(_visibleSize.width / 2,  size.height * 6 - size.height / 2));
+    startButton->setTag(kTagStartButton);
+
+    auto settingsButton = cocos2d::ui::Button::create();
+    settingsButton->setTitleText("SETTINGS");
+    settingsButton->setTitleFontName(Variables::FONT_NAME);
+    settingsButton->setTitleFontSize(size.height * .5f);
+    settingsButton->addTouchEventListener([&](cocos2d::Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
+        switch (type) {
+            case cocos2d::ui::Widget::TouchEventType::ENDED: {
+                this->runAction(Sequence::create(
+                        CallFunc::create([&](){
+                            onQuit();
+                            this->getChildByTag(kTagSettingsButton)->runAction(Sequence::create(
+                                    DelayTime::create(.5f),
+                                    ScaleTo::create(.5f, 0.f),
+                                    RemoveSelf::create(),
+                                    NULL
+                            ));
+                            this->getChildByTag(kTagStartButton)->runAction(Sequence::create(
+                                    ScaleTo::create(.5f, 0.f),
+                                    RemoveSelf::create(),
+                                    NULL
+                            ));
+                        }),
+                        DelayTime::create(1.2f),
+                        CallFunc::create([&]() {
+                            MainScene::getInstance()->replaceMain(Settings::create());
+                        }),
+                        NULL)
+                );
+                break;
+            }
+            default:
+                break;
+        }
+    });
+    settingsButton->setPosition(Vec2(_visibleSize.width / 2, size.height * 3 - size.height / 2));
+    settingsButton->setTag(kTagSettingsButton);
+    _addWidget(startButton, delay);
+    _addWidget(settingsButton, delay);
 }
 
 void MainMenu::_updateColor() {
@@ -235,4 +287,40 @@ void MainMenu::_updateColor() {
             _blocks[i][j]->paint(Color4F(_color));
         }
     }
+}
+
+void MainMenu::onQuit() {
+    for(auto i = 0; i < _blocks.size(); i++){
+        for(auto j = 0; j < _blocks[i].size(); j++) {
+            this->runAction(Sequence::create(
+                    DelayTime::create((i + j) / 20.f),
+                    CallFunc::create([&, i, j](){
+                        _blocks[i][j]->hide();
+                    }),
+                    NULL
+            ));
+        }
+    }
+}
+
+void MainMenu::_addWidget(cocos2d::Node *node, float delay) {
+    node->setScale(0);
+    this->addChild(node, 1);
+
+    this->runAction(Sequence::create(
+            DelayTime::create(delay),
+            CallFunc::create([&, node](){
+                for(auto i = 0; i < _blocks.size(); i++){
+                    for(auto j = 0; j < _blocks[i].size(); j++) {
+                        if(_blocks[i][j]->getBoundingBox().intersectsRect(node->getBoundingBox()))
+                            _blocks[i][j]->hide();
+                    }
+                }
+            }),
+            DelayTime::create(.2f),
+            CallFunc::create([&, node]{
+                node->runAction(ScaleTo::create(.5f, .8f));
+            }),
+            NULL
+    ));
 }

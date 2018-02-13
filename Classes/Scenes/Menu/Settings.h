@@ -8,8 +8,9 @@
 #include <ui/UIScrollView.h>
 #include <cocos/ui/UIButton.h>
 #include "cocos2d.h"
+#include "ParentLayer.h"
 
-class Settings : public cocos2d::Layer {
+class Settings : public ParentLayer {
 public:
     CREATE_FUNC(Settings);
 
@@ -24,6 +25,8 @@ protected:
     cocos2d::ui::ScrollView *_scrollView;
     std::string _language;
 
+    void _enterFrameHandler(float passedTime) override;
+
     bool _musicState;
 
     bool _effectsState;
@@ -33,8 +36,6 @@ protected:
     void onQuit();
 
     void _showScrollView();
-
-    cocos2d::Size _visibleSize;
 };
 
 
