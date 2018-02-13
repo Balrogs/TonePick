@@ -13,8 +13,8 @@ public:
 
 protected:
     int _touch;
-    BasicBlock* _focused;
-    std::vector<std::vector<BasicBlock*>> _blocks;
+    MenuBlock* _focused;
+    std::vector<std::vector<MenuBlock*>> _blocks;
     std::vector<cocos2d::Node*> _widgets;
     cocos2d::Size _visibleSize;
     Color4B _color;
@@ -27,7 +27,7 @@ protected:
     bool _touchHandlerMoved(const cocos2d::Touch *touch, cocos2d::Event *event);
     bool _touchHandlerEnd(const cocos2d::Touch *touch, cocos2d::Event *event);
 
-    virtual void _enterFrameHandler(float passedTime) = 0;
+    virtual void _enterFrameHandler(float passedTime);
 
     void _addWidget(cocos2d::Node* node, float delay);
     void _removeWidgetByTag(int tag, float duration);

@@ -262,6 +262,6 @@ void Settings::_showScrollView() {
 }
 
 void Settings::_enterFrameHandler(float passedTime) {
-
+    ParentLayer::_enterFrameHandler(passedTime);
 }
 

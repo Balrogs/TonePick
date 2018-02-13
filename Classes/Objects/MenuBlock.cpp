@@ -14,17 +14,17 @@ enum {
     kTagStencilRight = 106,
 };
 
-BasicBlock *BasicBlock::create(Size size, Color4F color) {
+MenuBlock *MenuBlock::create(Size size, Color4F color) {
     return create(size, color, true);
 }
 
-bool BasicBlock::init(Size size, Color4F color) {
+bool MenuBlock::init(Size size, Color4F color) {
     return init(size, color, true);
 }
 
 
-BasicBlock *BasicBlock::create(Size size, Color4F color, bool isBreakable) {
-    BasicBlock *ret = new(std::nothrow) BasicBlock();
+MenuBlock *MenuBlock::create(Size size, Color4F color, bool isBreakable) {
+    MenuBlock *ret = new(std::nothrow) MenuBlock();
     if (ret && ret->init(size, color, isBreakable)) {
         ret->autorelease();
     } else {
@@ -33,7 +33,7 @@ BasicBlock *BasicBlock::create(Size size, Color4F color, bool isBreakable) {
     return ret;
 }
 
-bool BasicBlock::init(Size size, Color4F color, bool isBreakable) {
+bool MenuBlock::init(Size size, Color4F color, bool isBreakable) {
     if(!Node::init()){
         return false;
     }
@@ -58,7 +58,7 @@ bool BasicBlock::init(Size size, Color4F color, bool isBreakable) {
 }
 
 
-Node *BasicBlock::_stencil() {
+Node *MenuBlock::_stencil() {
     auto stencil = Node::create();
     static Color4F green(0, 1, 0, 1);
 
@@ -108,33 +108,33 @@ Node *BasicBlock::_stencil() {
     return stencil;
 }
 
-Node *BasicBlock::_shape() {
+Node *MenuBlock::_shape() {
     DrawNode* dn = DrawNode::create();
     dn->drawSolidRect(Vec2::ZERO, Vec2(_size.width, _size.height), _color);
     return dn;
 }
 
-ClippingNode *BasicBlock::_clipper() {
+ClippingNode *MenuBlock::_clipper() {
     return ClippingNode::create();
 }
 
-void BasicBlock::paint(Color4F color) {
+void MenuBlock::paint(Color4F color) {
     auto drawNode = dynamic_cast<DrawNode *> (this->getChildByTag(kTagClipperNode)->getChildByTag(kTagShapeNode));
     drawNode->clear();
     drawNode->drawSolidRect(Vec2::ZERO, Vec2(_size.width, _size.height), color);
 }
 
-void BasicBlock::appear() {
+void MenuBlock::appear() {
     _show(true);
 }
 
-void BasicBlock::hide() {
+void MenuBlock::hide() {
     if(_isBreakable)
         _show(false);
 }
 
 
-void BasicBlock::_show(bool isVisible) {
+void MenuBlock::_show(bool isVisible) {
     float scale = 1.f;
 
     if(!isVisible){
@@ -165,7 +165,7 @@ void BasicBlock::_show(bool isVisible) {
     ));
 }
 
-Rect BasicBlock::getBoundingBox() const {
+Rect MenuBlock::getBoundingBox() const {
     Rect rect(this->getPosition().x, this->getPosition().y, _size.width, _size.height);
     return rect;
 }

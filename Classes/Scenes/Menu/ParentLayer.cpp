@@ -14,12 +14,12 @@ void ParentLayer::_fillArea(int xOffset, int width, int yOffset, int height) {
     auto delay = 0.f;
 
     for(int i = yOffset; i < height; i++){
-        std::vector<BasicBlock*> row;
+        std::vector<MenuBlock*> row;
 
         for(int j = xOffset; j < width; j++){
             auto pos = Vec2(j * size.width, i * size.width);
 
-            auto block = BasicBlock::create(size, color);
+            auto block = MenuBlock::create(size, color);
             block->setPosition(pos);
             this->addChild(block, 2);
             delay = (i + j) / 20.f;
@@ -128,13 +128,12 @@ bool ParentLayer::_touchHandlerEnd(const cocos2d::Touch *touch, cocos2d::Event *
     }
 
     if(_focused != nullptr){
+        _focused->runAction(Spawn::create(
+                ScaleTo::create(0.2f, 1.f),
+                MoveTo::create(0.2f, Vec2(_focused->getPosition().x + _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y + _focused->getBoundingBox().size.height * .2f / 2)),
+                NULL));
         if(_focused->getBoundingBox().containsPoint(touch->getLocation()))
             _focused->hide();
-        else
-            _focused->runAction(Spawn::create(
-                    ScaleTo::create(0.2f, 1.f),
-                    MoveTo::create(0.2f, Vec2(_focused->getPosition().x + _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y + _focused->getBoundingBox().size.height * .2f / 2)),
-                    NULL));
     }
 
     _focused = nullptr;
@@ -194,4 +193,8 @@ void ParentLayer::onQuit() {
             ));
         }
     }
+}
+
+void ParentLayer::_enterFrameHandler(float passedTime) {
+    _updateColor();
 }

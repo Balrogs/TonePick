@@ -9,21 +9,23 @@
 
 USING_NS_CC;
 
-class BasicBlock: public Node {
+class MenuBlock: public Node {
 public:
-    static BasicBlock* create(Size size, Color4F color);
-    static BasicBlock* create(Size size, Color4F color, bool isBreakable);
+    static MenuBlock* create(Size size, Color4F color);
+    static MenuBlock* create(Size size, Color4F color, bool isBreakable);
     bool init(Size size, Color4F color);
     bool init(Size size, Color4F color, bool isBreakable);
 
     void paint(Color4F color);
     void appear();
     void hide();
+    bool isHidden();
 
     Rect getBoundingBox() const override;
 
 protected:
     bool _isBreakable;
+    bool _isHidden;
     Size _size;
     Color4F _color;
     virtual Node* _stencil();

@@ -73,7 +73,7 @@ bool MainMenu::init() {
 }
 
 void MainMenu::_enterFrameHandler(float passedTime) {
-    _updateColor();
+    ParentLayer::_enterFrameHandler(passedTime);
 }
 
 void MainMenu::onEnter() {
@@ -181,6 +181,7 @@ void MainMenu::_exitButtons() {
                 _removeWidgetByTag(kTagExitYesButton, .7f);
                 _removeWidgetByTag(kTagExitNoButton, .5f);
                 _removeWidgetByTag(kTagExitLabel, .3f);
+                onQuit();
                 this->runAction(Sequence::create(
                         DelayTime::create(.8f),
                         CallFunc::create([&](){
