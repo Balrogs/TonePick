@@ -11,38 +11,23 @@
 
 class MainMenu : public ParentLayer {
 public:
-    static MainMenu *create();
+    CREATE_FUNC(MainMenu);
 
     bool init();
 
     void onEnter() override;
-    void onQuit() override;
 
     void onPushScene(int id);
 
-    void showPopUp(cocos2d::Node* popUp);
-
 protected:
-    std::vector<std::vector<BasicBlock*>> _blocks;
-    int _touch;
-    BasicBlock* _focused;
+    void _enterFrameHandler(float passedTime) override;
 
-    bool _touchHandlerBegin(const cocos2d::Touch *touch, cocos2d::Event *event);
-    bool _touchHandlerMoved(const cocos2d::Touch *touch, cocos2d::Event *event);
-    bool _touchHandlerEnd(const cocos2d::Touch *touch, cocos2d::Event *event);
-
-    void _enterFrameHandler(float passedTime) override ;
-
-    cocos2d::Size _visibleSize;
-
-    void _fillArea();
-
-    void _updateColor();
-
-    Color4B _color;
 private:
+    int _viewTag;
+    void _menuButtons();
+    void _exitButtons();
+    void _onExit();
 
-    void _addWidget(cocos2d::Node* node, float delay);
 };
 
 

@@ -33,22 +33,6 @@ bool Settings::init() {
 //                                 backButton->getBoundingBox().size.height / 2 + _bg->getBoundingBox().getMinY() + 25.f));
 //    this->addChild(backButton, 3);
 
-    const auto keyboardListener = cocos2d::EventListenerKeyboard::create();
-    keyboardListener->onKeyReleased = [&](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
-        switch (keyCode) {
-            case EventKeyboard::KeyCode::KEY_BREAK:
-            case EventKeyboard::KeyCode::KEY_ESCAPE:
-            case EventKeyboard::KeyCode::KEY_BACKSPACE: {
-                onQuit();
-            }
-                break;
-            default:
-                break;
-        }
-    };
-
-    this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this);
-
 //    cocos2d::UserDefault *def = cocos2d::UserDefault::getInstance();
 //
 //    _musicState = def->getBoolForKey("MUSIC", true);
@@ -112,6 +96,33 @@ bool Settings::init() {
 //
 //    this->setPosition(_visibleSize.width, 0);
 
+    _keyboardListener = cocos2d::EventListenerKeyboard::create();
+    _keyboardListener->onKeyReleased = [&](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+        switch (keyCode) {
+            case EventKeyboard::KeyCode::KEY_BREAK:
+            case EventKeyboard::KeyCode::KEY_ESCAPE:
+            case EventKeyboard::KeyCode::KEY_BACKSPACE: {
+                _removeAllWidgets();
+                onQuit();
+            }
+                break;
+            default:
+                break;
+        }
+    };
+
+    this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_keyboardListener, this);
+
+    _touch = -1;
+    const auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
+    touchListener->onTouchBegan = CC_CALLBACK_2(Settings::_touchHandlerBegin, this);
+    touchListener->onTouchMoved = CC_CALLBACK_2(Settings::_touchHandlerMoved, this);
+    touchListener->onTouchEnded = CC_CALLBACK_2(Settings::_touchHandlerEnd, this);
+    this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
+
+    _color = Color4B(79, 127, 204, 255);
+    _fillArea(2, 14, 1, Variables::FACTOR - 1);
+
     return true;
 }
 
@@ -121,8 +132,9 @@ void Settings::onEnter() {
 }
 
 void Settings::onQuit() {
+    ParentLayer::onQuit();
     this->runAction(Sequence::create(
-            DelayTime::create(1.f),
+            DelayTime::create(1.2f),
             CallFunc::create([&]() {
                 MainScene::getInstance()->replaceMain(MainMenu::create());
             }),

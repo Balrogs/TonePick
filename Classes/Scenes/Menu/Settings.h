@@ -33,7 +33,7 @@ protected:
 
     void onEnter() override;
 
-    void onQuit();
+    void onQuit() override;
 
     void _showScrollView();
 };
