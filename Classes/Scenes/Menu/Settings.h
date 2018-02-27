@@ -17,25 +17,17 @@ public:
     bool init();
 
 protected:
-    void _reloadButtons();
-
-    cocos2d::ui::Button *_musicButton;
-    cocos2d::ui::Button *_effectsButton;
-    cocos2d::ui::Button *_languageBox;
-    cocos2d::ui::ScrollView *_scrollView;
     std::string _language;
-
-    void _enterFrameHandler(float passedTime) override;
-
-    bool _musicState;
-
     bool _effectsState;
 
-    void onEnter() override;
-
+    virtual void  _backButtonHandler() override;
     void onQuit() override;
 
-    void _showScrollView();
+    void _showLanguages();
+    void _showCurrentLanguage();
+    void _showLanguageTitle();
+    void _showTitle();
+    void _defaultButtons();
 };
 
 

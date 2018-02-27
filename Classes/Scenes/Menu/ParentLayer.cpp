@@ -2,6 +2,49 @@
 #include <Global/Variables.h>
 #include "ParentLayer.h"
 
+bool ParentLayer::init() {
+    if (!Layer::init()) {
+        return false;
+    }
+
+    _visibleSize = Director::getInstance()->getVisibleSize();
+    _blockSize = Utils::_getBlockSize(_visibleSize);
+    _viewTag = -1;
+    _touch = -1;
+
+    _keyboardListener = cocos2d::EventListenerKeyboard::create();
+    _keyboardListener->onKeyReleased = [&](cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event) {
+        switch (keyCode) {
+            case EventKeyboard::KeyCode::KEY_BREAK:
+            case EventKeyboard::KeyCode::KEY_ESCAPE:
+            case EventKeyboard::KeyCode::KEY_BACKSPACE: {
+                _backButtonHandler();
+            }
+                break;
+            default:
+                break;
+        }
+    };
+
+    this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_keyboardListener, this);
+
+
+    const auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
+    touchListener->onTouchBegan = CC_CALLBACK_2(ParentLayer::_touchHandlerBegin, this);
+    touchListener->onTouchMoved = CC_CALLBACK_2(ParentLayer::_touchHandlerMoved, this);
+    touchListener->onTouchEnded = CC_CALLBACK_2(ParentLayer::_touchHandlerEnd, this);
+    this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
+
+    cocos2d::Director::getInstance()->getScheduler()->schedule(
+            schedule_selector(ParentLayer::_enterFrameHandler),
+            this, 1.f, false
+    );
+
+
+    return true;
+}
+
+
 void ParentLayer::_fillArea(int xOffset, int width, int yOffset, int height) {
     _xOffset = xOffset;
     _width = width;
@@ -48,7 +91,7 @@ void ParentLayer::_updateColor() {
 
 
 void ParentLayer::_addWidget(cocos2d::Node *node, float delay) {
-    node->setScale(0);
+    node->setVisible(false);
     _widgets.push_back(node);
     this->addChild(node, 1);
 
@@ -57,13 +100,16 @@ void ParentLayer::_addWidget(cocos2d::Node *node, float delay) {
             CallFunc::create([&, node](){
                 for(auto i = 0; i < _blocks.size(); i++){
                     for(auto j = 0; j < _blocks[i].size(); j++) {
-                        if(_blocks[i][j]->getBoundingBox().intersectsRect(node->getBoundingBox()))
+                        if(_blocks[i][j]->getBoundingBox().intersectsRect(node->getBoundingBox())){
                             _blocks[i][j]->hide();
+                        }
                     }
                 }
             }),
             DelayTime::create(.2f),
             CallFunc::create([&, node]{
+                node->setVisible(true);
+                node->setScale(0);
                 node->runAction(ScaleTo::create(.5f, .8f));
             }),
             NULL

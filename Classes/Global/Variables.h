@@ -16,6 +16,11 @@ enum Resolution {
 class Variables {
 public:
 
+    static const std::string EFFECTS_ON_BUTTON;
+    static const std::string EFFECTS_OFF_BUTTON;
+    static const std::string BACK_BUTTON;
+
+
     static const std::string FONT_NAME;
     static float FONT_SIZE_S();
     static float FONT_SIZE();

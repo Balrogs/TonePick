@@ -10,13 +10,16 @@
 class ParentLayer : public cocos2d::Layer {
 public:
     virtual void onQuit();
+    virtual bool init() override;
 
 protected:
+    int _viewTag;
     int _touch;
     MenuBlock* _focused;
     std::vector<std::vector<MenuBlock*>> _blocks;
     std::vector<cocos2d::Node*> _widgets;
     cocos2d::Size _visibleSize;
+    cocos2d::Size _blockSize;
     Color4B _color;
 
     void _fillArea(int xOffset, int width, int yOffset, int height);
@@ -26,6 +29,8 @@ protected:
     bool _touchHandlerBegin(const cocos2d::Touch *touch, cocos2d::Event *event);
     bool _touchHandlerMoved(const cocos2d::Touch *touch, cocos2d::Event *event);
     bool _touchHandlerEnd(const cocos2d::Touch *touch, cocos2d::Event *event);
+
+    virtual void  _backButtonHandler() = 0;
 
     virtual void _enterFrameHandler(float passedTime);
 

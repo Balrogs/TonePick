@@ -15,15 +15,12 @@ public:
 
     bool init();
 
-    void onEnter() override;
-
     void onPushScene(int id);
 
 protected:
-    void _enterFrameHandler(float passedTime) override;
+    virtual void  _backButtonHandler() override ;
 
 private:
-    int _viewTag;
     void _menuButtons();
     void _exitButtons();
     void _onExit();
