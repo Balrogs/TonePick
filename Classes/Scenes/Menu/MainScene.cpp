@@ -26,7 +26,7 @@ MainScene *MainScene::create() {
 }
 
 bool MainScene::init() {
-    if (!Scene::initWithPhysics()) {
+    if (!Scene::init()) {
         return false;
     }
     auto backgroundLayer = LayerColor::create(Color4B(46, 51, 58, 255));

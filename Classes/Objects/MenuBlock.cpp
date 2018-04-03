@@ -34,25 +34,10 @@ MenuBlock *MenuBlock::create(Size size, Color4F color, bool isBreakable) {
 }
 
 bool MenuBlock::init(Size size, Color4F color, bool isBreakable) {
-    if(!Node::init()){
+    if(!BaseBlock::init(size, color)){
         return false;
     }
     _isBreakable = isBreakable;
-    _size = size;
-    _color = color;
-
-
-    auto stencil = this->_stencil();
-    stencil->setTag( kTagStencilNode );
-
-    auto clipper = this->_clipper();
-    clipper->setTag( kTagClipperNode );
-    clipper->setStencil(stencil);
-    this->addChild(clipper);
-
-    auto shape = this->_shape();
-    shape->setTag( kTagShapeNode );
-    clipper->addChild(shape);
 
     return true;
 }
@@ -108,31 +93,11 @@ Node *MenuBlock::_stencil() {
     return stencil;
 }
 
-Node *MenuBlock::_shape() {
-    DrawNode* dn = DrawNode::create();
-    dn->drawSolidRect(Vec2::ZERO, Vec2(_size.width, _size.height), _color);
-    return dn;
-}
-
-ClippingNode *MenuBlock::_clipper() {
-    return ClippingNode::create();
-}
-
 void MenuBlock::paint(Color4F color) {
     auto drawNode = dynamic_cast<DrawNode *> (this->getChildByTag(kTagClipperNode)->getChildByTag(kTagShapeNode));
     drawNode->clear();
     drawNode->drawSolidRect(Vec2::ZERO, Vec2(_size.width, _size.height), color);
 }
-
-void MenuBlock::appear() {
-    _show(true);
-}
-
-void MenuBlock::hide() {
-    if(_isBreakable)
-        _show(false);
-}
-
 
 void MenuBlock::_show(bool isVisible) {
     float scale = 1.f;
@@ -163,9 +128,4 @@ void MenuBlock::_show(bool isVisible) {
             }),
             NULL
     ));
-}
-
-Rect MenuBlock::getBoundingBox() const {
-    Rect rect(this->getPosition().x, this->getPosition().y, _size.width, _size.height);
-    return rect;
 }

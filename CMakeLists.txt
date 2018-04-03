@@ -136,6 +136,11 @@ set(GAME_SRC
         Classes/Scenes/Game/GameScene.cpp
         Classes/Global/Utils.cpp
         Classes/Objects/MenuBlock.cpp
+        Classes/Scenes/Menu/ParentLayer.cpp
+        Classes/Objects/GameBlock.cpp
+        Classes/Objects/BaseBlock.cpp
+        Classes/Objects/Panel.cpp
+        Classes/Scenes/Game/GameOverLayer.cpp
         ${PLATFORM_SPECIFIC_SRC}
         )
 
@@ -190,7 +195,13 @@ set(GAME_HEADERS
         Classes/Global/Utils.h
         Classes/Objects/MenuBlock.h
         ${PLATFORM_SPECIFIC_HEADERS}
-        Classes/Scenes/Menu/ParentLayer.cpp Classes/Scenes/Menu/ParentLayer.h)
+        Classes/Scenes/Menu/ParentLayer.h
+        Classes/Objects/GameBlock.h
+        Classes/Objects/BaseBlock.h
+        Classes/Objects/Panel.h
+        Classes/Scenes/Game/PauseLayer.h
+        Classes/Scenes/Game/GameOverLayer.h
+        )
 
 
 # Configure libcocos2d

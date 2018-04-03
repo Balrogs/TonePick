@@ -21,7 +21,12 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/Scenes/Menu/Settings.cpp \
                    ../../Classes/Scenes/Game/GameScene.cpp \
                    ../../Classes/Global/Utils.cpp \
-                   ../../Classes/Objects/MenuBlock.cpp
+                   ../../Classes/Objects/MenuBlock.cpp \
+                   ../../Classes/Scenes/Menu/ParentLayer.cpp \
+                   ../../Classes/Objects/GameBlock.cpp \
+                   ../../Classes/Objects/BaseBlock.cpp \
+                   ../../Classes/Objects/Panel.cpp \
+                   ../../Classes/Scenes/Game/GameOverLayer.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 

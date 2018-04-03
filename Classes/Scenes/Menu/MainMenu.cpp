@@ -1,11 +1,8 @@
-//
-// Created by igor on 24.01.18.
-//
-
 #include <cocos/ui/UIButton.h>
 #include <Global/Localization/LocalizedStrings.h>
 #include <Global/Variables.h>
 #include <Global/Utils.h>
+#include <Scenes/Game/GameScene.h>
 #include "MainMenu.h"
 #include "MainScene.h"
 #include "Settings.h"
@@ -35,11 +32,8 @@ bool MainMenu::init() {
 }
 
 void MainMenu::onPushScene(int id) {
-
-//    auto scene = BattleParent::createScene(id);
-//    Director::getInstance()->pushScene(scene);
+    Director::getInstance()->pushScene(GameScene::createScene(id));
 }
-
 
 
 void MainMenu::_menuButtons() {
