@@ -141,6 +141,7 @@ set(GAME_SRC
         Classes/Objects/BaseBlock.cpp
         Classes/Objects/Panel.cpp
         Classes/Scenes/Game/GameOverLayer.cpp
+        Classes/Scenes/Game/PauseLayer.cpp
         ${PLATFORM_SPECIFIC_SRC}
         )
 

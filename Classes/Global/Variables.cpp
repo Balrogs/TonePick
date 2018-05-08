@@ -11,7 +11,7 @@ const std::string Variables::EFFECTS_ON_BUTTON = "";
 const std::string Variables::EFFECTS_OFF_BUTTON = "";
 const std::string Variables::BACK_BUTTON = "";
 
-const std::string Variables::FONT_NAME = "arial.ttf";
+const std::string Variables::FONT_NAME = "ChixaDemiBold.ttf";
 const int Variables::FACTOR = 9;
 
 void Variables::setResolution(Resolution resolution) {

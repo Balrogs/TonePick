@@ -6,13 +6,13 @@ enum {
     kTagShapeNode = 102
 };
 
-GameBlock *GameBlock::create(Size size, Color4F color) {
-    return create(size, color, false);
+GameBlock *GameBlock::create(Size size, Color4F color, int id, int panelId) {
+    return create(size, color, id, panelId, false);
 }
 
-GameBlock *GameBlock::create(Size size, Color4F color, bool isStatic) {
+GameBlock *GameBlock::create(Size size, Color4F color, int id, int panelId, bool isStatic) {
     GameBlock *ret = new(std::nothrow) GameBlock();
-    if (ret && ret->init(size, color, isStatic)) {
+    if (ret && ret->init(size, color, id, panelId, isStatic)) {
         ret->autorelease();
     } else {
         CC_SAFE_DELETE(ret);
@@ -20,14 +20,16 @@ GameBlock *GameBlock::create(Size size, Color4F color, bool isStatic) {
     return ret;
 }
 
-bool GameBlock::init(Size size, Color4F color) {
-    return GameBlock::init(size, color, false);
+bool GameBlock::init(Size size, Color4F color, int id, int panelId) {
+    return GameBlock::init(size, color, id, panelId, false);
 }
 
-bool GameBlock::init(Size size, Color4F color, bool isStatic) {
+bool GameBlock::init(Size size, Color4F color, int id, int panelId, bool isStatic) {
     if(!BaseBlock::init(size, color)){
         return false;
     }
+    _id = id;
+    _panelId = panelId;
     _isStatic = isStatic;
 
     return true;
@@ -57,4 +59,28 @@ void GameBlock::_show(bool isVisible) {
     auto stencil = dynamic_cast<ClippingNode *> (this->getChildByTag(kTagClipperNode))->getStencil();
 
     stencil->runAction(ScaleTo::create(.4f, scale));
+}
+
+bool GameBlock::isStatic() {
+    return _isStatic;
+}
+
+Color4F GameBlock::getColor() {
+    return _color;
+}
+
+int GameBlock::getId() {
+    return _id;
+}
+
+int GameBlock::getPanelId() {
+    return _panelId;
+}
+
+bool GameBlock::isMoving() {
+    return _isMoving;
+}
+
+void GameBlock::setMoving(bool moving) {
+    _isMoving = moving;
 }

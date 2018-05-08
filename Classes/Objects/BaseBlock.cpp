@@ -52,3 +52,7 @@ Rect BaseBlock::getBoundingBox() const {
     Rect rect(this->getPosition().x, this->getPosition().y, _size.width, _size.height);
     return rect;
 }
+
+const Size &BaseBlock::getContentSize() const {
+    return _size;
+}

@@ -13,6 +13,7 @@ public:
     void hide();
 
     Rect getBoundingBox() const override;
+    const Size& getContentSize() const override;
 
 protected:
     Size _size;

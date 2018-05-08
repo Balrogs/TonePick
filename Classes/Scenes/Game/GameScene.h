@@ -2,6 +2,9 @@
 #define TONEPICK_GAMESCENE_H
 
 #include "cocos2d.h"
+#include <Objects/GameBlock.h>
+#include <Global/Utils.h>
+#include <Objects/Panel.h>
 
 USING_NS_CC;
 
@@ -20,6 +23,10 @@ public:
     void onQuit();
 
 protected:
+
+    std::vector<Panel*> _panels;
+    GameBlock* _focused;
+    Vec2 _focusedStartPos;
 
     Size _visibleSize;
     bool _isPaused;
@@ -40,6 +47,8 @@ protected:
     bool _touchHandlerEnd(const Touch *touch, Event *event);
 
     bool _isGameOver();
+
+    bool _checkIntersection();
 
     void _pause(bool pause);
 };
