@@ -32,7 +32,8 @@ enum {
     kTagEffectsLabel = 103,
     kTagLanguageLabel = 104,
     kTagExitLabel = 105,
-    kTagTitleLabel = 106
+    kTagTitleLabel = 106,
+    WIDGETS_LEVEL = 2
 };
 
 bool Settings::init() {
@@ -46,7 +47,7 @@ bool Settings::init() {
     _language = def->getStringForKey("LANGUAGE", "ENGLISH");
 
     _color = Color4B(79, 127, 204, 255);
-    _fillArea(2, 14, 1, Variables::FACTOR - 1);
+    _fillArea(2, 14, 1, Variables::FACTOR - 1, WIDGETS_LEVEL);
 
     _showTitle();
     _defaultButtons();

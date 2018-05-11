@@ -142,6 +142,7 @@ set(GAME_SRC
         Classes/Objects/Panel.cpp
         Classes/Scenes/Game/GameOverLayer.cpp
         Classes/Scenes/Game/PauseLayer.cpp
+        Classes/UI/Clocks.cpp
         ${PLATFORM_SPECIFIC_SRC}
         )
 
@@ -202,6 +203,7 @@ set(GAME_HEADERS
         Classes/Objects/Panel.h
         Classes/Scenes/Game/PauseLayer.h
         Classes/Scenes/Game/GameOverLayer.h
+        Classes/UI/Clocks.h
         )
 
 

@@ -27,7 +27,8 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/Objects/BaseBlock.cpp \
                    ../../Classes/Objects/Panel.cpp \
                    ../../Classes/Scenes/Game/GameOverLayer.cpp \
-                   ../../Classes/Scenes/Game/PauseLayer.cpp
+                   ../../Classes/Scenes/Game/PauseLayer.cpp \
+                   ../../Classes/UI/Clocks.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 

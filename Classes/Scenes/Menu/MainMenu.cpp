@@ -16,7 +16,9 @@ enum {
     kTagSettingsButton = 101,
     kTagExitYesButton = 102,
     kTagExitNoButton = 103,
-    kTagExitLabel = 104
+    kTagExitLabel = 104,
+
+    WIDGETS_LEVEL = 2
 };
 
 bool MainMenu::init() {
@@ -25,7 +27,7 @@ bool MainMenu::init() {
     }
 
     _color = Color4B(79, 127, 204, 255);
-    _fillArea(4, 12, 1, Variables::FACTOR - 1);
+    _fillArea(4, 12, 1, Variables::FACTOR - 1, WIDGETS_LEVEL);
     _menuButtons();
 
     return true;

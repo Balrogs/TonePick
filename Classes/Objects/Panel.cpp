@@ -6,6 +6,11 @@
 
 const int THRESHOLD = 51;
 
+const int Panel::DEFAULT_LEVEL = 1;
+const int STATIC_BLOCKS_LEVEL = 2;
+const int Panel::FOCUSED_BLOCK_LEVEL = 3;
+const float Panel::ACTION_TIME_INTERVAL = .2f;
+
 Panel *Panel::create(Size blockSize, int blocksCount, Color4F colorStart, Color4F colorEnd, int id) {
     Panel *ret = new(std::nothrow) Panel();
     if (ret && ret->init(blockSize, blocksCount, colorStart, colorEnd, id)) {
@@ -33,7 +38,7 @@ bool Panel::init(Size blockSize, int blocksCount, Color4F colorStart, Color4F co
     for(int i = 1; i < blocksCount - 1; i++) {
         auto block = _createById(i, false, colorStart, diff);
 
-        this->addChild(block);
+        this->addChild(block, DEFAULT_LEVEL);
         _blocks.push_back(block);
     }
 
@@ -42,24 +47,17 @@ bool Panel::init(Size blockSize, int blocksCount, Color4F colorStart, Color4F co
 
     auto first = _createById(0, true, colorStart, diff);
 
-    this->addChild(first);
+    this->addChild(first, STATIC_BLOCKS_LEVEL);
 
     auto last = _createById(blocksCount - 1, true, colorStart, diff);
 
-    this->addChild(last);
+    this->addChild(last, STATIC_BLOCKS_LEVEL);
 
     _blocks.insert(_blocks.begin(), first);
     _blocks.insert(_blocks.end(), last);
 
-
     for(int i = 0; i < blocksCount; i ++){
-        auto color = Color4F(
-                (float) colorStart.r + diff.x * i,
-                (float) colorStart.g + diff.y * i,
-                (float) colorStart.b + diff.z * i,
-                1.f
-        );
-        _expected.push_back(color);
+        setBlockPosition(_blocks[i], i * _blockSize.width);
     }
 
     _boundingBox = Rect(Vec2::ZERO, Size(_blockSize.width * blocksCount, _blockSize.height));
@@ -76,11 +74,16 @@ void Panel::appear() {
 int Panel::countEquality() {
     int blocksCount = (int) _blocks.size();
     double counter = 0;
-    for(int i = 1; i < blocksCount - 1; i++){
-        if(_blocks[i] != nullptr && _blocks[i]->getColor().equals(_expected[i])){
-            counter++;
+
+    for(auto b : _blocks){
+        int id = b->getId();
+        int actualPos = (int) (b->getPositionX() / _blockSize.width);
+
+        if(id == actualPos && id != 0 && id != blocksCount - 1){
+            counter ++;
         }
     }
+
     return (int) (counter / (blocksCount - 2) * 100);
 }
 
@@ -122,6 +125,7 @@ GameBlock *Panel::_createById(int id, bool isStatic, Color4F colorStart, Vec3 di
 
 
 void Panel::move(GameBlock *block, float delta) {
+
     if(block->getPositionX() + delta < _blockSize.width || block->getPositionX() + delta > (_blocks.size() - 2) * _blockSize.width){
         return;
     }
@@ -134,9 +138,8 @@ void Panel::move(GameBlock *block, float delta) {
         auto diff = b->getPositionX() - block->getPositionX();
         if(fabs(diff) > _blockSize.width) continue;
         auto fact = fabs(diff) / _blockSize.width * 100;
-        CCLOG("FACT %f", fact);
+
         if(fact < THRESHOLD){
-            CCLOG("INTERSECTION");
             auto offset = _blockSize.width;
             if(diff > 0){
                 offset = -offset;
@@ -149,19 +152,17 @@ void Panel::move(GameBlock *block, float delta) {
 }
 
 void Panel::setBlockPosition(GameBlock *block, float x) {
-    CCLOG("SET POS %f", x);
-
     block->setMoving(true);
-
+    block->stopAllActions();
     block->runAction(Sequence::create(
-                        Spawn::create(
-                        //  ScaleTo::create(.2f, 1.f),
-                            MoveTo::create(.2f, Vec2(x, 0)),
-                            NULL),
-                        CallFunc::create([&, block]{
-                            block->setMoving(false);
-                        }),
-                        NULL
+            Spawn::create(
+                    ScaleTo::create(ACTION_TIME_INTERVAL, 1.f),
+                    MoveTo::create(ACTION_TIME_INTERVAL, Vec2(x, 0)),
+                    NULL),
+            CallFunc::create([&, block]{
+                block->setMoving(false);
+            }),
+            NULL
     ));
 }
 
@@ -172,6 +173,5 @@ void Panel::setBlockPosition(GameBlock *block) {
 
     setBlockPosition(block, pos);
 }
-
 
 

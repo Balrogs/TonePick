@@ -12,6 +12,10 @@ USING_NS_CC;
 
 class Panel: public Node {
 public:
+    static const int DEFAULT_LEVEL;
+    static const int FOCUSED_BLOCK_LEVEL;
+    static const float ACTION_TIME_INTERVAL;
+
     static Panel* create(Size blockSize, int blocksCount, Color4F colorStart, Color4F colorEnd, int id);
     bool init(Size blockSize, int blocksCount, Color4F colorStart, Color4F colorEnd, int id);
 
@@ -34,7 +38,6 @@ private:
     Size _blockSize;
     Rect _boundingBox;
     std::vector<GameBlock*> _blocks;
-    std::vector<Color4F> _expected;
 
     GameBlock* _createById(int id, bool isStatic, Color4F colorStart, Vec3 diff);
 };

@@ -26,7 +26,6 @@ protected:
 
     std::vector<Panel*> _panels;
     GameBlock* _focused;
-    Vec2 _focusedStartPos;
 
     Size _visibleSize;
     bool _isPaused;
@@ -36,21 +35,17 @@ protected:
 
     bool init(int type);
 
-    void _keyBoardPressedHandler(EventKeyboard::KeyCode keyCode, Event *event);
-
-    void _keyBoardReleasedHandler(EventKeyboard::KeyCode keyCode, Event *event);
-
     bool _touchHandlerBegin(const Touch *touch, Event *event);
 
     bool _touchHandlerMove(const Touch *touch, Event *event);
 
     bool _touchHandlerEnd(const Touch *touch, Event *event);
 
-    bool _isGameOver();
-
-    bool _checkIntersection();
+    bool _touchEnd();
 
     void _pause(bool pause);
+
+    void _pauseRecursive(Node *_node, bool _pause);
 };
 
 

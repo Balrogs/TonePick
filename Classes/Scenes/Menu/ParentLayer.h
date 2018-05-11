@@ -13,6 +13,9 @@ public:
     virtual bool init() override;
 
 protected:
+
+    static const float ADD_REMOVE_SPEED;
+
     int _viewTag;
     int _touch;
     MenuBlock* _focused;
@@ -22,7 +25,7 @@ protected:
     cocos2d::Size _blockSize;
     Color4B _color;
 
-    void _fillArea(int xOffset, int width, int yOffset, int height);
+    void _fillArea(int xOffset, int width, int yOffset, int height, int zorder);
     void _refill();
     void _updateColor();
 

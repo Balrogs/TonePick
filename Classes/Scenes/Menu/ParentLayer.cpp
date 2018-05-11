@@ -2,6 +2,16 @@
 #include <Global/Variables.h>
 #include "ParentLayer.h"
 
+const float ParentLayer::ADD_REMOVE_SPEED = 0.5f;
+const float ZOOM_SPEED = 0.2f;
+const float DEFAULT_SCALE = 1.f;
+const float HIDE_SCALE = 0.f;
+const float ZOOM_SCALE = 1.2f;
+
+const float DELAY_FACTOR = 30.f;
+
+
+
 bool ParentLayer::init() {
     if (!Layer::init()) {
         return false;
@@ -45,7 +55,7 @@ bool ParentLayer::init() {
 }
 
 
-void ParentLayer::_fillArea(int xOffset, int width, int yOffset, int height) {
+void ParentLayer::_fillArea(int xOffset, int width, int yOffset, int height, int zorder) {
     _xOffset = xOffset;
     _width = width;
     _yOffset = yOffset;
@@ -54,7 +64,7 @@ void ParentLayer::_fillArea(int xOffset, int width, int yOffset, int height) {
     auto size = Utils::_getBlockSize(_visibleSize);
     auto color = Color4F(_color);
 
-    auto delay = 0.f;
+    float delay;
 
     for(int i = yOffset; i < height; i++){
         std::vector<MenuBlock*> row;
@@ -64,8 +74,8 @@ void ParentLayer::_fillArea(int xOffset, int width, int yOffset, int height) {
 
             auto block = MenuBlock::create(size, color);
             block->setPosition(pos);
-            this->addChild(block, 2);
-            delay = (i + j) / 20.f;
+            this->addChild(block, zorder);
+            delay = (i + j) / DELAY_FACTOR;
             this->runAction(Sequence::create(
                     DelayTime::create(delay),
                     CallFunc::create([block]{
@@ -106,11 +116,11 @@ void ParentLayer::_addWidget(cocos2d::Node *node, float delay) {
                     }
                 }
             }),
-            DelayTime::create(.2f),
+            DelayTime::create(ZOOM_SPEED),
             CallFunc::create([&, node]{
                 node->setVisible(true);
                 node->setScale(0);
-                node->runAction(ScaleTo::create(.5f, .8f));
+                node->runAction(ScaleTo::create(ADD_REMOVE_SPEED, .8f));
             }),
             NULL
     ));
@@ -129,9 +139,13 @@ bool ParentLayer::_touchHandlerBegin(const cocos2d::Touch *touch, cocos2d::Event
             if(box.containsPoint(touch->getLocation())){
                 _focused = _blocks[i][j];
                 _focused->runAction(Spawn::create(
-                        ScaleTo::create(0.2f, 1.2f),
-                        MoveTo::create(0.2f, Vec2(_focused->getPosition().x - _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y - _focused->getBoundingBox().size.height * .2f / 2)),
-                        NULL));
+                        ScaleTo::create(ZOOM_SPEED, ZOOM_SCALE),
+                        MoveTo::create(ZOOM_SPEED, Vec2(
+                                _focused->getPosition().x - _focused->getBoundingBox().size.width * (ZOOM_SCALE - DEFAULT_SCALE) / 2,
+                                _focused->getPosition().y - _focused->getBoundingBox().size.height * (ZOOM_SCALE - DEFAULT_SCALE) / 2
+                        )),
+                        NULL
+                ));
                 return true;
             }
         }
@@ -148,17 +162,25 @@ bool ParentLayer::_touchHandlerMoved(const cocos2d::Touch *touch, cocos2d::Event
                 if(_focused != nullptr ){
                     if(_focused != _blocks[i][j])
                         _focused->runAction(Spawn::create(
-                                ScaleTo::create(0.2f, 1.f),
-                                MoveTo::create(0.2f, Vec2(_focused->getPosition().x + _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y + _focused->getBoundingBox().size.height * .2f / 2)),
-                                NULL));
+                                ScaleTo::create(ZOOM_SPEED, DEFAULT_SCALE),
+                                MoveTo::create(ZOOM_SPEED, Vec2(
+                                        _focused->getPosition().x + _focused->getBoundingBox().size.width * (ZOOM_SCALE - DEFAULT_SCALE) / 2,
+                                        _focused->getPosition().y + _focused->getBoundingBox().size.height * (ZOOM_SCALE - DEFAULT_SCALE) / 2
+                                )),
+                                NULL
+                        ));
                     else
                         return true;
                 }
                 _focused = _blocks[i][j];
                 _focused->runAction(Spawn::create(
-                        ScaleTo::create(0.2f, 1.2f),
-                        MoveTo::create(0.2f, Vec2(_focused->getPosition().x - _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y - _focused->getBoundingBox().size.height * .2f / 2)),
-                        NULL));
+                        ScaleTo::create(ZOOM_SPEED, ZOOM_SCALE),
+                        MoveTo::create(ZOOM_SPEED, Vec2(
+                                _focused->getPosition().x - _focused->getBoundingBox().size.width * (ZOOM_SCALE - DEFAULT_SCALE)/ 2,
+                                _focused->getPosition().y - _focused->getBoundingBox().size.height * (ZOOM_SCALE - DEFAULT_SCALE) / 2
+                        )),
+                        NULL
+                ));
                 return true;
             }
         }
@@ -175,9 +197,13 @@ bool ParentLayer::_touchHandlerEnd(const cocos2d::Touch *touch, cocos2d::Event *
 
     if(_focused != nullptr){
         _focused->runAction(Spawn::create(
-                ScaleTo::create(0.2f, 1.f),
-                MoveTo::create(0.2f, Vec2(_focused->getPosition().x + _focused->getBoundingBox().size.width * .2f / 2,_focused->getPosition().y + _focused->getBoundingBox().size.height * .2f / 2)),
-                NULL));
+                ScaleTo::create(ZOOM_SPEED, DEFAULT_SCALE),
+                MoveTo::create(ZOOM_SPEED, Vec2(
+                        _focused->getPosition().x + _focused->getBoundingBox().size.width * (ZOOM_SCALE - DEFAULT_SCALE) / 2,
+                        _focused->getPosition().y + _focused->getBoundingBox().size.height * (ZOOM_SCALE - DEFAULT_SCALE) / 2
+                )),
+                NULL
+        ));
         if(_focused->getBoundingBox().containsPoint(touch->getLocation()))
             _focused->hide();
     }
@@ -189,7 +215,7 @@ bool ParentLayer::_touchHandlerEnd(const cocos2d::Touch *touch, cocos2d::Event *
 
 void ParentLayer::_removeWidgetByTag(int tag, float duration) {
     this->getChildByTag(tag)->runAction(Sequence::create(
-            ScaleTo::create(duration, 0.f),
+            ScaleTo::create(duration, HIDE_SCALE),
             RemoveSelf::create(),
             CallFunc::create([&, tag, duration](){
                 for (auto it = _widgets.begin() ; it != _widgets.end(); ++it){
@@ -205,7 +231,7 @@ void ParentLayer::_removeWidgetByTag(int tag, float duration) {
 void ParentLayer::_removeAllWidgets() {
     for(auto widget : _widgets){
         widget->runAction(Sequence::create(
-                ScaleTo::create(.5f, 0.f),
+                ScaleTo::create(ADD_REMOVE_SPEED, HIDE_SCALE),
                 RemoveSelf::create(),
                 NULL
         ));
@@ -217,7 +243,7 @@ void ParentLayer::_refill() {
     for(auto i = 0; i < _blocks.size(); i++){
         for(auto j = 0; j < _blocks[i].size(); j++) {
             this->runAction(Sequence::create(
-                    DelayTime::create((i + j) / 20.f),
+                    DelayTime::create((i + j) / DELAY_FACTOR),
                     CallFunc::create([&, i, j](){
                         _blocks[i][j]->appear();
                     }),
@@ -231,7 +257,7 @@ void ParentLayer::onQuit() {
     for(auto i = 0; i < _blocks.size(); i++){
         for(auto j = 0; j < _blocks[i].size(); j++) {
             this->runAction(Sequence::create(
-                    DelayTime::create((i + j) / 20.f),
+                    DelayTime::create((i + j) / DELAY_FACTOR),
                     CallFunc::create([&, i, j](){
                         _blocks[i][j]->hide();
                     }),
